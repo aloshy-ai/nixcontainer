@@ -1,0 +1,225 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "brave@latest": {
+      "last_modified": "2025-01-22T23:44:18Z",
+      "resolved": "github:NixOS/nixpkgs/1800f90db02ce58f3733498b8052d5d62bf44c2f#brave",
+      "source": "devbox-search",
+      "version": "1.74.48",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/brfninjkny5iym0srkxxi00hldbbn7gw-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/brfninjkny5iym0srkxxi00hldbbn7gw-brave-1.74.48"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rwrwxxzgpj76117cx9xyrcd1wqd4dk8x-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rwrwxxzgpj76117cx9xyrcd1wqd4dk8x-brave-1.74.48"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4cr9bwybywy1dkq3ljd1klyvgjdh12zx-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4cr9bwybywy1dkq3ljd1klyvgjdh12zx-brave-1.74.48"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/apnykpi30ka3876pvsb6mbcvpwxw3nzr-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/apnykpi30ka3876pvsb6mbcvpwxw3nzr-brave-1.74.48"
+        }
+      }
+    },
+    "direnv@latest": {
+      "last_modified": "2024-12-23T21:10:33Z",
+      "resolved": "github:NixOS/nixpkgs/de1864217bfa9b5845f465e771e0ecb48b30e02d#direnv",
+      "source": "devbox-search",
+      "version": "2.35.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xp28bzq6qi11db7pqgfx3rc139q45489-direnv-2.35.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xp28bzq6qi11db7pqgfx3rc139q45489-direnv-2.35.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/55vva1q4lhw2m62vvzzm2z26wfkpb430-direnv-2.35.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/55vva1q4lhw2m62vvzzm2z26wfkpb430-direnv-2.35.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gza242ir81wafi79cfxk619n36rxqqmk-direnv-2.35.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/gza242ir81wafi79cfxk619n36rxqqmk-direnv-2.35.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jw2ax71m8dzgs8xybginlsyw79ndyww1-direnv-2.35.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jw2ax71m8dzgs8xybginlsyw79ndyww1-direnv-2.35.0"
+        }
+      }
+    },
+    "gh@latest": {
+      "last_modified": "2025-01-07T09:15:50Z",
+      "resolved": "github:NixOS/nixpkgs/8c9fd3e564728e90829ee7dbac6edc972971cd0f#gh",
+      "source": "devbox-search",
+      "version": "2.65.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/i7c3cxs55v3bbrnx8njarpmh7hqf8j0g-gh-2.65.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/i7c3cxs55v3bbrnx8njarpmh7hqf8j0g-gh-2.65.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vfidcgqi2l5vqs9dm0ygjbprjjg31m1m-gh-2.65.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/vfidcgqi2l5vqs9dm0ygjbprjjg31m1m-gh-2.65.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/10pcvlswasd1wzmb58fil8q77vq9b8g3-gh-2.65.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/10pcvlswasd1wzmb58fil8q77vq9b8g3-gh-2.65.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gicqc89lkcpinrjls3mz7b3p6bbjy99j-gh-2.65.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/gicqc89lkcpinrjls3mz7b3p6bbjy99j-gh-2.65.0"
+        }
+      }
+    },
+    "iterm2@latest": {
+      "last_modified": "2025-01-19T08:16:51Z",
+      "resolved": "github:NixOS/nixpkgs/50165c4f7eb48ce82bd063e1fb8047a0f515f8ce#iterm2",
+      "source": "devbox-search",
+      "version": "3.5.11",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jynzk7bad3gz666mz4vm5n51sp6zs1b1-iterm2-3.5.11",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jynzk7bad3gz666mz4vm5n51sp6zs1b1-iterm2-3.5.11"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/60yw2675q190vwyzjxzp4qay8z4nnbmb-iterm2-3.5.11",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/60yw2675q190vwyzjxzp4qay8z4nnbmb-iterm2-3.5.11"
+        }
+      }
+    },
+    "telegram-desktop@latest": {
+      "last_modified": "2025-01-17T10:46:57Z",
+      "resolved": "github:NixOS/nixpkgs/041c867bad68dfe34b78b2813028a2e2ea70a23c#telegram-desktop",
+      "source": "devbox-search",
+      "version": "5.10.3",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/cgm1g8qgv0a2g0p58fl8wjz5vskhx644-telegram-desktop-5.10.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/cgm1g8qgv0a2g0p58fl8wjz5vskhx644-telegram-desktop-5.10.3"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/n63qqcj47zgk2wi9ynzmws54pgd9vy9r-telegram-desktop-5.10.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/n63qqcj47zgk2wi9ynzmws54pgd9vy9r-telegram-desktop-5.10.3"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4sl29zl66qmq2mmbgz0ndh16kvs7r1rg-telegram-desktop-5.10.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4sl29zl66qmq2mmbgz0ndh16kvs7r1rg-telegram-desktop-5.10.3"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/5l27fiz3csgkqnhd9v0531dijf688lz8-telegram-desktop-5.10.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/5l27fiz3csgkqnhd9v0531dijf688lz8-telegram-desktop-5.10.3"
+        }
+      }
+    }
+  }
+}
