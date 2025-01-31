@@ -13,13 +13,23 @@
     "docker@latest",
     "brave@latest"
   ],
+  "env": {
+    "REPOSITORY": "https://github.com/aloshy-ai/devbox"
+  },
   "shell": {
     "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
+      "echo "
+        ▄▀█ █░░ █▀█ █▀ █░█ █▄█ ░ ▄▀█ █
+        █▀█ █▄▄ █▄█ ▄█ █▀█ ░█░ ▄ █▀█ █
     ],
     "scripts": {
-      "test": [
-        "echo \"Error: no test specified\" && exit 1"
+      "spotlight": [
+        "ln -s '${DEVBOX_PACKAGES_DIR}/Applications' ~/Applications/DevboxApps",
+        "mdutil -s ~/Applications/DevboxApps"
+      ],
+      "sync": [
+        "devbox global pull $REPOSITORY -f",
+        "devbox global push $REPOSITORY -f"
       ]
     }
   }
