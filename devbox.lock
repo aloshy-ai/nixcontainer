@@ -1,6 +1,54 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "brave@latest": {
+      "last_modified": "2025-01-22T23:44:18Z",
+      "resolved": "github:NixOS/nixpkgs/1800f90db02ce58f3733498b8052d5d62bf44c2f#brave",
+      "source": "devbox-search",
+      "version": "1.74.48",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/brfninjkny5iym0srkxxi00hldbbn7gw-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/brfninjkny5iym0srkxxi00hldbbn7gw-brave-1.74.48"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rwrwxxzgpj76117cx9xyrcd1wqd4dk8x-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rwrwxxzgpj76117cx9xyrcd1wqd4dk8x-brave-1.74.48"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4cr9bwybywy1dkq3ljd1klyvgjdh12zx-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4cr9bwybywy1dkq3ljd1klyvgjdh12zx-brave-1.74.48"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/apnykpi30ka3876pvsb6mbcvpwxw3nzr-brave-1.74.48",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/apnykpi30ka3876pvsb6mbcvpwxw3nzr-brave-1.74.48"
+        }
+      }
+    },
     "coreutils-full@latest": {
       "last_modified": "2024-12-23T21:10:33Z",
       "resolved": "github:NixOS/nixpkgs/de1864217bfa9b5845f465e771e0ecb48b30e02d#coreutils-full",

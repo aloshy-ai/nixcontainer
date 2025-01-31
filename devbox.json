@@ -10,7 +10,8 @@
     "mkpasswd@latest",
     "gash-utils@latest",
     "inetutils@latest",
-    "docker@latest"
+    "docker@latest",
+    "brave@latest"
   ],
   "shell": {
     "init_hook": [
