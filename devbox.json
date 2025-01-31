@@ -13,6 +13,9 @@
     "docker@latest",
     "brave@latest"
   ],
+  "env": {
+    "REPOSITORY": "https://github.com/aloshy-ai/devbox"
+  },
   "shell": {
     "init_hook": [
       "echo \"▄▀█ █░░ █▀█ █▀ █░█ █▄█ ░ ▄▀█ █\n█▀█ █▄▄ █▄█ ▄█ █▀█ ░█░ ▄ █▀█ █\""
@@ -23,8 +26,7 @@
         "mdutil -s ~/Applications/DevboxApps"
       ],
       "sync": [
-        "devbox global pull $REPOSITORY -f",
-        "devbox global push $REPOSITORY -f"
+        "devbox global push $REPOSITORY"
       ]
     }
   }
