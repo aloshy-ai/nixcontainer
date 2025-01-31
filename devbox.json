@@ -2,10 +2,15 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
   "packages": [
     "iterm2@latest",
-    "direnv@latest",
     "gh@latest",
-    "brave@latest",
-    "telegram-desktop@latest"
+    "fira-code-nerdfont@latest",
+    "coreutils-full@latest",
+    "vscode@latest",
+    "direnv@latest",
+    "mkpasswd@latest",
+    "gash-utils@latest",
+    "inetutils@latest",
+    "docker@latest"
   ],
   "shell": {
     "init_hook": [
