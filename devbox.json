@@ -26,7 +26,7 @@
       "spotlight": [
         "ln -s \"${DEVBOX_PACKAGES_DIR}/Applications\" ~/Applications/DevboxApps"
       ],
-      "sync": [
+      "push": [
         "devbox global push $REPOSITORY"
       ]
     }
