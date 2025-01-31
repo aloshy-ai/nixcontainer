@@ -14,7 +14,8 @@
     "brave@latest"
   ],
   "env": {
-    "REPOSITORY": "https://github.com/aloshy-ai/devbox"
+    "REPOSITORY": "https://github.com/aloshy-ai/devbox",
+    "DOCKER_HOST": "unix://$HOME/.colima/docker.sock"
   },
   "shell": {
     "init_hook": [
