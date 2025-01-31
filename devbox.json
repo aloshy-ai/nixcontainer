@@ -11,10 +11,12 @@
     "gash-utils@latest",
     "inetutils@latest",
     "docker@latest",
-    "brave@latest"
+    "brave@latest",
+    "colima@latest"
   ],
   "env": {
-    "REPOSITORY": "https://github.com/aloshy-ai/devbox"
+    "REPOSITORY": "https://github.com/aloshy-ai/devbox",
+    "DOCKER_HOST": "unix://$HOME/.colima/docker.sock"
   },
   "shell": {
     "init_hook": [
@@ -23,7 +25,6 @@
     "scripts": {
       "spotlight": [
         "ln -s \"${DEVBOX_PACKAGES_DIR}/Applications\" ~/Applications/DevboxApps"
-      
       ],
       "sync": [
         "devbox global push $REPOSITORY"
