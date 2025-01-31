@@ -22,8 +22,8 @@
     ],
     "scripts": {
       "spotlight": [
-        "ln -s '${DEVBOX_PACKAGES_DIR}/Applications' ~/Applications/DevboxApps",
-        "mdutil -s ~/Applications/DevboxApps"
+        "ln -s \"${DEVBOX_PACKAGES_DIR}/Applications\" ~/Applications/DevboxApps",
+      
       ],
       "sync": [
         "devbox global push $REPOSITORY"
