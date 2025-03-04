@@ -14,6 +14,16 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
+    nixos-hardware = {
+      url = "github:nixos/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
 		dotbox = {
 			url = "github:snowfallorg/dotbox";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -21,6 +31,11 @@
 
     devbox = {
       url = "github:jetify-com/devbox";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 	};
