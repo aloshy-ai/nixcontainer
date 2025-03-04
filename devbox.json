@@ -1,34 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
   "packages": [
-    "iterm2@latest",
-    "gh@latest",
-    "fira-code-nerdfont@latest",
-    "coreutils-full@latest",
-    "vscode@latest",
-    "direnv@latest",
-    "mkpasswd@latest",
-    "gash-utils@latest",
-    "inetutils@latest",
-    "docker@latest",
-    "brave@latest",
-    "colima@latest"
   ],
-  "env": {
-    "REPOSITORY": "https://github.com/aloshy-ai/devbox",
-    "DOCKER_HOST": "unix://$HOME/.colima/docker.sock"
-  },
   "shell": {
     "init_hook": [
       "echo \"▄▀█ █░░ █▀█ █▀ █░█ █▄█ ░ ▄▀█ █\n█▀█ █▄▄ █▄█ ▄█ █▀█ ░█░ ▄ █▀█ █\""
     ],
     "scripts": {
-      "spotlight": [
-        "ln -s \"${DEVBOX_PACKAGES_DIR}/Applications\" ~/Applications/DevboxApps"
-      ],
-      "push": [
-        "devbox global push $REPOSITORY"
-      ]
     }
   }
 }
