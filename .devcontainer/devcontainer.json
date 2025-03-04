@@ -1,0 +1,44 @@
+{
+  "name": "aloshy.🅰🅸 | Nix Devbox",
+  "image": "mcr.microsoft.com/devcontainers/base:alpine",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.fontSize": 14,
+        "editor.fontFamily": "'JetBrainsMono Nerd Font Mono', 'Droid Sans Mono', 'monospace', monospace",
+        "editor.fontLigatures": true,
+        "editor.stickyScroll.enabled": false,
+        "editor.minimap.enabled":false,
+        "terminal.integrated.fontLigatures.enabled": true,
+        "files.autoSave": "afterDelay",
+        "workbench.colorTheme": "GitHub Dark",
+        "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
+      },
+      "extensions": [
+          "zongou.vs-seti-jetbrainsmononerdfontmono",
+          "SanjulaGanepola.github-local-actions",
+          "ms-vscode-remote.remote-containers",
+          "GitHub.vscode-pull-request-github",
+          "github.vscode-github-actions",
+          "arrterian.nix-env-selector",
+          "fuadpashayev.bottom-terminal",
+          "ms-azuretools.vscode-docker",
+          "github.github-vscode-theme",
+          "kamadorueda.alejandra",
+          "jnoortheen.nix-ide",
+          "fsevenm.run-it-on",
+          "jetpack-io.devbox",
+          "github.remotehub",
+          "github.copilot",
+          "bbenoist.Nix"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/nix:1": {
+      "flakeUri": "github:jetify-com/devbox/latest"
+    }
+  }
+}
