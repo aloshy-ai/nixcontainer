@@ -25,5 +25,5 @@
     snowfallorg.dotbox
 	];
     system.stateVersion = "24.11";
-    boot.loader.grub = enabled;
+    boot.loader.grub = true;
 }
