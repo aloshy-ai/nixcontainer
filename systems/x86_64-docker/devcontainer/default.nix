@@ -27,10 +27,4 @@
 	];
     system.stateVersion = "24.11";
     boot.isContainer = true;
-
-    fileSystems."/" = {
-              device = "none";
-              fsType = "tmpfs";
-              options = [ "size=2G" "mode=755" ];
-            };
 }
