@@ -31,17 +31,8 @@
 			src = ./.;
 
 			overlays = with inputs; [
-				# Use the overlay provided by this flake.
-				dotbox.overlays
-
-				# There is also a named overlay, though the output is the same.
-				dotbox.overlays."nixpkgs/snowfallorg"
-
-        # Use the overlay provided by this flake.
-				snowfall-flake.overlays
-
-				# There is also a named overlay, though the output is the same.
-				snowfall-flake.overlays."package/flake"
+				dotbox.overlays.default
+				snowfall-flake.overlays.default
 			];
 		};
 }
