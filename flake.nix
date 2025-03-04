@@ -32,13 +32,13 @@
 
 			overlays = with inputs; [
 				# Use the overlay provided by this flake.
-				dotbox.overlay
+				dotbox.overlays
 
 				# There is also a named overlay, though the output is the same.
 				dotbox.overlays."nixpkgs/snowfallorg"
 
         # Use the overlay provided by this flake.
-				snowfall-flake.overlay
+				snowfall-flake.overlays
 
 				# There is also a named overlay, though the output is the same.
 				snowfall-flake.overlays."package/flake"
