@@ -1,15 +1,47 @@
 {
-  description = "A very basic flake";
+	description = "aloshy.🅰🅸 | Nix Devbox";
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-  };
+	inputs = {
+		nixpkgs.url = "github:nixos/nixpkgs";
 
-  outputs = { self, nixpkgs }: {
+		snowfall-lib = {
+			url = "github:snowfallorg/lib";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 
-    packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
+    snowfall-flake = {
+			url = "github:snowfallorg/flake";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 
-    packages.x86_64-linux.default = self.packages.x86_64-linux.hello;
+		dotbox = {
+			url = "github:snowfallorg/dotbox";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 
-  };
+    devbox = {
+      url = "github:jetify-com/devbox";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+	};
+
+	outputs = inputs:
+		inputs.snowfall-lib.mkFlake {
+			inherit inputs;
+			src = ./.;
+
+			overlays = with inputs; [
+				# Use the overlay provided by this flake.
+				dotbox.overlay
+
+				# There is also a named overlay, though the output is the same.
+				dotbox.overlays."nixpkgs/snowfallorg"
+
+        # Use the overlay provided by this flake.
+				snowfall-flake.overlay
+
+				# There is also a named overlay, though the output is the same.
+				snowfall-flake.overlays."package/flake"
+			];
+		};
 }

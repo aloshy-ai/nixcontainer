@@ -1,5 +1,5 @@
 {
-  "name": "aloshy.🅰🅸 | NixOS Devbox",
+  "name": "aloshy.🅰🅸 | Nix Devbox",
   "image": "mcr.microsoft.com/devcontainers/base:alpine",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace",
