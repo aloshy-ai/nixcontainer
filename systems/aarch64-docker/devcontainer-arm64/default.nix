@@ -23,7 +23,7 @@
     environment.systemPackages = with pkgs; [
                 snowfallorg.flake
     snowfallorg.dotbox
-    alejandra.defaultPackage.${system}
+    alejandra
         ];
     system.stateVersion = "24.11";
     boot.isContainer = true;
