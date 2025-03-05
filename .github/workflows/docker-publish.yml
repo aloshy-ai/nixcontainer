@@ -16,11 +16,9 @@ jobs:
           - arch: amd64
             nix-system: x86_64-linux
             platforms: linux/amd64
-            os-arch: linux/amd64
           - arch: arm64
             nix-system: aarch64-linux
             platforms: linux/arm64
-            os-arch: linux/arm64
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,11 +46,6 @@ jobs:
           name: ${{ secrets.CACHIX_CACHE || 'nix-community' }}
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush: ${{ !secrets.CACHIX_AUTH_TOKEN }}
-      
-      - name: Build Docker image with Nix
-        run: nix build .#dockerConfigurations.devcontainer-${{ matrix.arch }}
-        env:
-          NIX_CONFIG: "experimental-features = nix-command flakes"
       
       - name: Extract version information
         id: version
@@ -101,24 +94,24 @@ jobs:
           # Show the contents of result
           ls -la result
           
-          # Import the archive directly (the actual tarball might be in different locations)
+          # Import the archive with proper architecture information
           if [ -f result/tarball/nixos-system-${{ matrix.nix-system }}.tar.xz ]; then
             echo "Found system tarball, using it"
-            docker import result/tarball/nixos-system-${{ matrix.nix-system }}.tar.xz nixos:latest-${{ matrix.arch }}
+            docker import --platform=${{ matrix.platforms }} --change "LABEL org.opencontainers.image.architecture=${{ matrix.arch }}" result/tarball/nixos-system-${{ matrix.nix-system }}.tar.xz nixos:latest-${{ matrix.arch }}
           elif [ -f result/tarball ]; then
             echo "Found tarball file, using it"
-            docker import result/tarball nixos:latest-${{ matrix.arch }}
+            docker import --platform=${{ matrix.platforms }} --change "LABEL org.opencontainers.image.architecture=${{ matrix.arch }}" result/tarball nixos:latest-${{ matrix.arch }}
           elif [ -d result/tarball ]; then
             echo "Found tarball directory, using contents"
             find result/tarball -type f | xargs ls -la
             TARBALL=$(find result/tarball -type f | head -n 1)
-            docker import $TARBALL nixos:latest-${{ matrix.arch }}
+            docker import --platform=${{ matrix.platforms }} --change "LABEL org.opencontainers.image.architecture=${{ matrix.arch }}" $TARBALL nixos:latest-${{ matrix.arch }}
           else
             echo "Looking for any archive in the result"
             find result -type f -name "*.tar*" | xargs ls -la
             TARBALL=$(find result -type f -name "*.tar*" | head -n 1)
             if [ -n "$TARBALL" ]; then
-              docker import $TARBALL nixos:latest-${{ matrix.arch }}
+              docker import --platform=${{ matrix.platforms }} --change "LABEL org.opencontainers.image.architecture=${{ matrix.arch }}" $TARBALL nixos:latest-${{ matrix.arch }}
             else
               echo "ERROR: Could not find a suitable tarball to import"
               exit 1
@@ -134,8 +127,6 @@ jobs:
             docker push "$tag"
             echo "Pushed: $tag"
           done
-      
-      # Push step is now integrated into the build and load step
 
   create-manifest:
     needs: build-and-push
