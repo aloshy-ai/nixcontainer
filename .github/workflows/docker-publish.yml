@@ -94,9 +94,16 @@ jobs:
       
       - name: Import image to Docker
         run: |
-          RESULT_FILE="$(readlink -f result)"
-          echo "Loading Docker image from $RESULT_FILE"
-          docker load < "$RESULT_FILE"
+          # Find the actual image path from the result symlink
+          STORE_PATH=$(nix path-info -r result | grep tarball)
+          echo "Using Nix store path: $STORE_PATH"
+          
+          # Load the image from the correct path
+          docker load < "$STORE_PATH"
+          
+          # Get the loaded image ID
+          IMAGE_ID=$(docker images --format "{{.Repository}}:{{.Tag}}" | head -n 1)
+          echo "IMAGE_ID=${IMAGE_ID}" >> $GITHUB_ENV
       
       - name: Push Docker image
         if: github.event_name != 'pull_request'
