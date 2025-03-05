@@ -6,8 +6,8 @@
       "echo \"▄▀█ █░░ █▀█ █▀ █░█ █▄█ ░ ▄▀█ █\n█▀█ █▄▄ █▄█ ▄█ █▀█ ░█░ ▄ █▀█ █\""
     ],
     "scripts": {
-      "build-x86_64-devcontainer":[ "nix build .#dockerConfigurations.devcontainer-arm64"],
-      "build-aarch64-devcontainer": [ "nix build .#dockerConfigurations.devcontainer-amd64" ]
+      "build-devcontainer-amd64":[ "nix build .#dockerConfigurations.devcontainer-arm64"],
+      "build-devcontainer-arm64": [ "nix build .#dockerConfigurations.devcontainer-amd64" ]
     }
   }
 }
