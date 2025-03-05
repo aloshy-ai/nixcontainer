@@ -1,5 +1,5 @@
 {
-	description = "aloshy.🅰🅸 | Nix Devbox";
+	description = "aloshy.🅰🅸 | Devbox";
 
 	inputs = {
 		nixpkgs.url = "github:nixos/nixpkgs";
