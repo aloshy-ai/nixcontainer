@@ -1,6 +1,6 @@
 {
   "name": "aloshy.🅰🅸 | Nix Devbox",
-  "image": "aloshyai/devcontainer",
+  "image": "aloshyai/devcontainer:nixos-latest",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace",
   "customizations": {
