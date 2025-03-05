@@ -93,7 +93,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Import image to Docker
-        run: docker load < result
+        run: |
+          RESULT_FILE="$(readlink -f result)"
+          echo "Loading Docker image from $RESULT_FILE"
+          docker load < "$RESULT_FILE"
       
       - name: Push Docker image
         if: github.event_name != 'pull_request'
