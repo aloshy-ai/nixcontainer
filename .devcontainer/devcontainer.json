@@ -1,6 +1,6 @@
 {
   "name": "aloshy.🅰🅸 | Nix Devbox",
-  "image": "mcr.microsoft.com/devcontainers/base:alpine",
+  "image": "aloshyai/devcontainer",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace",
   "customizations": {
