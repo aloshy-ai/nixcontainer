@@ -35,10 +35,5 @@
           "bbenoist.Nix"
       ]
     }
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/nix:1": {
-      "flakeUri": "github:jetify-com/devbox/latest"
-    }
   }
 }
