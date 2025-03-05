@@ -1,6 +1,6 @@
 {
   "name": "aloshy.🅰🅸 | Nix Devbox",
-  "image": "aloshyai/devcontainer:nixos-latest",
+  "image": "mcr.microsoft.com/devcontainers/base:alpine",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace",
   "customizations": {
@@ -34,6 +34,11 @@
           "github.copilot",
           "bbenoist.Nix"
       ]
+    },
+    "features": {
+    "ghcr.io/devcontainers/features/nix:1": {
+      "flakeUri": "github:jetify-com/devbox/latest"
+    }
     }
   }
 }
