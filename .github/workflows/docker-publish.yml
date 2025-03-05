@@ -47,7 +47,7 @@ jobs:
         with:
           name: ${{ secrets.CACHIX_CACHE || 'nix-community' }}
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          skipPush: ${{ !secrets.CACHIX_AUTH_TOKEN }}
+          skipPush: true
       
       - name: Build Docker image with Nix
         run: nix build .#dockerConfigurations.devcontainer-${{ matrix.arch }}
@@ -78,9 +78,9 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/devcontainer
           tags: |
-            type=raw,value=nixos:${{ steps.version.outputs.version }}-${{ matrix.arch }}
-            type=raw,value=nixos:${{ steps.version.outputs.major_minor }}-${{ matrix.arch }},enable=${{ steps.version.outputs.is_tag == 'true' }}
-            type=raw,value=nixos:latest-${{ matrix.arch }}
+            type=raw,value=nixos-${{ steps.version.outputs.version }}-${{ matrix.arch }}
+            type=raw,value=nixos-${{ steps.version.outputs.major_minor }}-${{ matrix.arch }},enable=${{ steps.version.outputs.is_tag == 'true' }}
+            type=raw,value=nixos-latest-${{ matrix.arch }}
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -171,7 +171,7 @@ jobs:
         with:
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devcontainer:nixos:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devcontainer:nixos-latest
           provenance: false
           build: false
           merge-tag: true
@@ -182,7 +182,7 @@ jobs:
         with:
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devcontainer:nixos:${{ steps.version.outputs.version }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devcontainer:nixos-${{ steps.version.outputs.version }}
           provenance: false
           build: false
           merge-tag: true
@@ -193,7 +193,7 @@ jobs:
         with:
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devcontainer:nixos:${{ steps.version.outputs.major_minor }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devcontainer:nixos-${{ steps.version.outputs.major_minor }}
           provenance: false
           build: false
           merge-tag: true
