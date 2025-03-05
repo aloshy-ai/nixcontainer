@@ -98,20 +98,36 @@ jobs:
           # Build the image
           nix build .#dockerConfigurations.devcontainer-${{ matrix.arch }}
           
-          # Find the actual path to the image
-          IMAGE_PATH=$(readlink -f result)
-          echo "Image path: $IMAGE_PATH"
+          # Show the contents of result
+          ls -la result
           
-          # Load the image
-          docker load < "$IMAGE_PATH"
-          
-          # Find the loaded image
-          LOADED_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | head -n 1)
-          echo "Loaded image: $LOADED_IMAGE"
+          # Import the archive directly (the actual tarball might be in different locations)
+          if [ -f result/tarball/nixos-system-${{ matrix.nix-system }}.tar.xz ]; then
+            echo "Found system tarball, using it"
+            docker import result/tarball/nixos-system-${{ matrix.nix-system }}.tar.xz nixos:latest-${{ matrix.arch }}
+          elif [ -f result/tarball ]; then
+            echo "Found tarball file, using it"
+            docker import result/tarball nixos:latest-${{ matrix.arch }}
+          elif [ -d result/tarball ]; then
+            echo "Found tarball directory, using contents"
+            find result/tarball -type f | xargs ls -la
+            TARBALL=$(find result/tarball -type f | head -n 1)
+            docker import $TARBALL nixos:latest-${{ matrix.arch }}
+          else
+            echo "Looking for any archive in the result"
+            find result -type f -name "*.tar*" | xargs ls -la
+            TARBALL=$(find result -type f -name "*.tar*" | head -n 1)
+            if [ -n "$TARBALL" ]; then
+              docker import $TARBALL nixos:latest-${{ matrix.arch }}
+            else
+              echo "ERROR: Could not find a suitable tarball to import"
+              exit 1
+            fi
+          fi
           
           # Tag the image with proper tags
           for tag in ${{ steps.meta.outputs.tags }}; do
-            docker tag "$LOADED_IMAGE" "$tag"
+            docker tag "nixos:latest-${{ matrix.arch }}" "$tag"
             echo "Tagged: $tag"
             
             # Push the image
