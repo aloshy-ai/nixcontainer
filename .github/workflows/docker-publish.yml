@@ -92,31 +92,34 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Import image to Docker
-        run: |
-          # Find the actual image path from the result symlink
-          STORE_PATH=$(nix path-info -r result | grep tarball)
-          echo "Using Nix store path: $STORE_PATH"
-          
-          # Load the image from the correct path
-          docker load < "$STORE_PATH"
-          
-          # Get the loaded image ID
-          IMAGE_ID=$(docker images --format "{{.Repository}}:{{.Tag}}" | head -n 1)
-          echo "IMAGE_ID=${IMAGE_ID}" >> $GITHUB_ENV
-      
-      - name: Push Docker image
+      - name: Build and push Docker image
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          platforms: ${{ matrix.platforms }}
-          load: false
-          provenance: false
-          build: false
-          inputs: result
+        run: |
+          # Build the image
+          nix build .#dockerConfigurations.devcontainer-${{ matrix.arch }}
+          
+          # Find the actual path to the image
+          IMAGE_PATH=$(readlink -f result)
+          echo "Image path: $IMAGE_PATH"
+          
+          # Load the image
+          docker load < "$IMAGE_PATH"
+          
+          # Find the loaded image
+          LOADED_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | head -n 1)
+          echo "Loaded image: $LOADED_IMAGE"
+          
+          # Tag the image with proper tags
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            docker tag "$LOADED_IMAGE" "$tag"
+            echo "Tagged: $tag"
+            
+            # Push the image
+            docker push "$tag"
+            echo "Pushed: $tag"
+          done
+      
+      # Push step is now integrated into the build and load step
 
   create-manifest:
     needs: build-and-push
