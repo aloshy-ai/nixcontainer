@@ -34,11 +34,11 @@
           "github.copilot",
           "bbenoist.Nix"
       ]
-    },
-    "features": {
+    }
+  },
+  "features": {
     "ghcr.io/devcontainers/features/nix:1": {
       "flakeUri": "github:jetify-com/devbox/latest"
-    }
     }
   }
 }
