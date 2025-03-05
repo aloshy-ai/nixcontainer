@@ -5,6 +5,9 @@
     "init_hook": [
       "echo \"▄▀█ █░░ █▀█ █▀ █░█ █▄█ ░ ▄▀█ █\n█▀█ █▄▄ █▄█ ▄█ █▀█ ░█░ ▄ █▀█ █\""
     ],
-    "scripts": {}
+    "scripts": {
+      "build-x86_64-devcontainer":[ "nix build .#dockerConfigurations.devcontainer-arm64"],
+      "build-aarch64-devcontainer": [ "nix build .#dockerConfigurations.devcontainer-amd64" ]
+    }
   }
 }
