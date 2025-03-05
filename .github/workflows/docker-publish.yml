@@ -46,7 +46,7 @@ jobs:
           skipPush: ${{ !secrets.CACHIX_AUTH_TOKEN }}
       
       - name: Build Docker image with Nix
-        run: nix build .#dockerConfigurations.devcontainer
+        run: nix build .#dockerConfigurations.devcontainer-${{ matrix.arch }}
       
       - name: Docker metadata
         id: meta
