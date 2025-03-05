@@ -20,11 +20,6 @@
     ...
 }:
 {
-    environment.systemPackages = with pkgs; [
-		snowfallorg.flake
-    snowfallorg.dotbox
-    alejandra
-	];
-    system.stateVersion = "24.11";
+    system.stateVersion = "25.05";
     boot.isContainer = true;
 }
