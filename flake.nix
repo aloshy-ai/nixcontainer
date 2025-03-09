@@ -24,9 +24,9 @@
 
         # Use Linux packages for container contents
         targetSystem =
-          if system == "aarch64-darwin"
+          if system == "aarch64-darwin" || system == "aarch64-linux"
           then "aarch64-linux"
-          else "aarch64-linux"; # Change this from x86_64-linux
+          else "x86_64-linux";
 
         pkgsLinux = import nixpkgs {
           system = targetSystem;
