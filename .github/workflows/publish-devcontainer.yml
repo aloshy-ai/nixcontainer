@@ -1,0 +1,16 @@
+name: Publish Dev Container
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - '.devcontainer/**'
+  workflow_dispatch:
+
+jobs:
+  publish-devcontainer:
+    uses: devcontainers/ci/.github/workflows/deploy.yaml@v0.3
+    with:
+      imageName: ghcr.io/${{ github.repository }}/devcontainer
+    secrets:
+      registryPassword: ${{ secrets.GITHUB_TOKEN }}
