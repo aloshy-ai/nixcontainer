@@ -2,16 +2,23 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
   "packages": [
     "alejandra@latest",
-    "act@latest"
+    "act@latest",
+    "jq@latest"
   ],
   "shell": {
     "init_hook": [
-      "echo \"▄▀█ █░░ █▀█ █▀ █░█ █▄█ ░ ▄▀█ █\n█▀█ █▄▄ █▄█ ▄█ █▀█ ░█░ ▄ █▀█ █\"",
+      "gh auth status &>/dev/null || gh auth login",
+      "export GITHUB_TOKEN=$(gh auth token)",
+      "export GITHUB_USERNAME=$(gh api user | jq -r .login)",
+      "echo \"▄▀█ █░░ █▀█ █▀ █░█ █▄░█ ░ ▄▀█ █\n█▀█ █▄▄ █▄█ ▄█ █▀█ █░▀█ ▄ █▀█ █\"",
       "devbox run --list"
     ],
     "scripts": {
-      "build-devcontainer-amd64": ["nix build .#dockerConfigurations.devcontainer-arm64"],
-      "build-devcontainer-arm64": ["nix build .#dockerConfigurations.devcontainer-amd64"]
+      "build": ["nix build"],
+      "load":  ["nix build .#loadImage && ./result/bin/load-image"],
+      "push": [
+        "nix build .#pushToGhcr && GITHUB_USERNAME=$GITHUB_USERNAME GITHUB_TOKEN=$GITHUB_TOKEN ./result/bin/push-to-ghcr"
+      ]
     }
   }
 }

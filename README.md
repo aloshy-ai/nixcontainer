@@ -24,28 +24,45 @@ devbox run <script>
 ## Scripts
 Scripts are custom commands that can be run using this project's environment. This project has the following scripts:
 
-* [build-devcontainer-amd64](#devbox-run-build-devcontainer-amd64)
-* [build-devcontainer-arm64](#devbox-run-build-devcontainer-arm64)
+* [build](#devbox-run-build)
+* [load](#devbox-run-load)
+* [push](#devbox-run-push)
 
 ## Shell Init Hook
 The Shell Init Hook is a script that runs whenever the devbox environment is instantiated. It runs 
 on `devbox shell` and on `devbox run`.
 ```sh
-echo "▄▀█ █░░ █▀█ █▀ █░█ █▄█ ░ ▄▀█ █
-█▀█ █▄▄ █▄█ ▄█ █▀█ ░█░ ▄ █▀█ █"
+gh auth status &>/dev/null || gh auth login
+export GITHUB_TOKEN=$(gh auth token)
+export GITHUB_USERNAME=$(gh api user | jq -r .login)
+echo "▄▀█ █░░ █▀█ █▀ █░█ █▄░█ ░ ▄▀█ █
+█▀█ █▄▄ █▄█ ▄█ █▀█ █░▀█ ▄ █▀█ █"
+devbox run --list
 ```
+
+## Packages
+
+* [alejandra@latest](https://www.nixhub.io/packages/alejandra)
+* [act@latest](https://www.nixhub.io/packages/act)
+* [jq@latest](https://www.nixhub.io/packages/jq)
 
 ## Script Details
 
-### devbox run build-devcontainer-amd64
+### devbox run build
 ```sh
-nix build .#dockerConfigurations.devcontainer-arm64
+nix build
 ```
 &ensp;
 
-### devbox run build-devcontainer-arm64
+### devbox run load
 ```sh
-nix build .#dockerConfigurations.devcontainer-amd64
+nix build .#loadImage && ./result/bin/load-image
+```
+&ensp;
+
+### devbox run push
+```sh
+nix build .#pushToGhcr && GITHUB_USERNAME=$GITHUB_USERNAME GITHUB_TOKEN=$GITHUB_TOKEN ./result/bin/push-to-ghcr
 ```
 &ensp;
 

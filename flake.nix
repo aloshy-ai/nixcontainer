@@ -63,6 +63,7 @@
         baseSystemLayer = n2c.buildLayer {
           deps = with pkgs; [
             (hiPrio zsh) # Default shell (high priority to ensure it's preferred)
+            bash # Provides /bin/sh and /bin/bash
             coreutils # Essential tools
             git # Version control
             direnv # Environment management
@@ -192,19 +193,30 @@
           echo "Successfully pushed image to ghcr.io/$USERNAME/nixcontainer:latest"
         '';
 
+        # Script to load image into Docker
+        loadImage = pkgs.writeScriptBin "load-image" ''
+          #!${pkgs.bash}/bin/bash
+          set -euo pipefail
+
+          # Load the image into Docker
+          ${devcontainer.copyToDockerDaemon}/bin/copy-to-docker-daemon
+
+          echo "Successfully loaded image as nixcontainer:latest"
+        '';
+
         # Helper function to check if a value exists in a list
         contains = list: value: builtins.elem value list;
 
         # Container image and utilities
         packages = {
-          inherit devcontainer pushToGhcr;
+          inherit devcontainer pushToGhcr loadImage;
           copyToDocker = devcontainer.copyToDockerDaemon;
           default = devcontainer;
         };
       in {
         # Container image and utilities
         packages = {
-          inherit devcontainer pushToGhcr;
+          inherit devcontainer pushToGhcr loadImage;
           copyToDocker = devcontainer.copyToDockerDaemon;
           default = devcontainer;
         };
