@@ -88,7 +88,7 @@
 
         # DevContainer image with minimal configuration
         devcontainer = n2c.buildImage {
-          name = "aloshy-ai-devcontainer";
+          name = "nixcontainer";
           tag = "latest";
 
           # Layer optimization
@@ -140,12 +140,12 @@
           ${devcontainer.copyToDockerDaemon}/bin/copy-to-docker-daemon
 
           # Tag the image for GHCR
-          ${pkgs.docker}/bin/docker tag aloshy-ai-devcontainer:latest ghcr.io/$USERNAME/aloshy-ai-devcontainer:latest
+          ${pkgs.docker}/bin/docker tag nixcontainer:latest ghcr.io/$USERNAME/nixcontainer:latest
 
           # Push to GHCR
-          ${pkgs.docker}/bin/docker push ghcr.io/$USERNAME/aloshy-ai-devcontainer:latest
+          ${pkgs.docker}/bin/docker push ghcr.io/$USERNAME/nixcontainer:latest
 
-          echo "Successfully pushed image to ghcr.io/$USERNAME/aloshy-ai-devcontainer:latest"
+          echo "Successfully pushed image to ghcr.io/$USERNAME/nixcontainer:latest"
         '';
 
         # Helper function to check if a value exists in a list
