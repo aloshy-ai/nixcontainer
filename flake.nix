@@ -24,7 +24,10 @@
 
         # Use Linux packages for container contents
         pkgsLinux = import nixpkgs {
-          system = "aarch64-linux";
+          system =
+            if system == "aarch64-darwin"
+            then "aarch64-linux"
+            else "x86_64-linux";
           config = {
             allowUnfree = true;
           };
