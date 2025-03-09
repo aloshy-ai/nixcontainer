@@ -14,7 +14,7 @@
     "permissions": "chown -R vscode:vscode /workspace",
     "home-manager": "nix run home-manager/master -- switch"
   },
-  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+  "image": "ghcr.io/aloshy-ai/nixcontainer",
   "customizations": {
     "vscode": {
       "settings": {

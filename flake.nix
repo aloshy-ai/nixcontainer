@@ -53,6 +53,30 @@
             bash
             coreutils
             git
+            iana-etc
+          ];
+        };
+
+        # System files layer with pre-created users
+        systemFilesLayer = n2c.buildLayer {
+          deps = [];
+          contents = [
+            (pkgs.writeTextDir "etc/passwd" ''
+              root:x:0:0:System administrator:/root:/bin/bash
+              nobody:x:65534:65534:Nobody:/:/bin/false
+              vscode:x:1000:1000:VSCode User:/home/vscode:/bin/bash
+            '')
+            (pkgs.writeTextDir "etc/group" ''
+              root:x:0:
+              nobody:x:65534:
+              vscode:x:1000:
+            '')
+            (pkgs.writeTextDir "etc/shadow" ''
+              root:!:1::::::
+              nobody:!:1::::::
+              vscode:!:1::::::
+            '')
+            (pkgs.writeTextDir "home/vscode/.bashrc" '''')
           ];
         };
 
@@ -68,13 +92,9 @@
           #!/bin/sh
           set -e
 
-          # Create user and group
-          groupadd -g 1000 vscode || echo "Group already exists"
-          useradd -u 1000 -g vscode -m -s /bin/bash vscode || echo "User already exists"
-
           # Setup workspace and vscode directories
-          mkdir -p /workspace && chown vscode:vscode /workspace
-          mkdir -p /home/vscode/.vscode-server && chown vscode:vscode /home/vscode/.vscode-server
+          mkdir -p /workspace && chown 1000:1000 /workspace
+          mkdir -p /home/vscode/.vscode-server && chown 1000:1000 /home/vscode/.vscode-server
         '';
 
         # Root filesystem setup
@@ -102,6 +122,7 @@
           ];
           layers = [
             baseSystemLayer
+            systemFilesLayer
             vscodeLayer
           ];
 
