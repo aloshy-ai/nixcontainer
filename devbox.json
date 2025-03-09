@@ -10,7 +10,6 @@
       "gh auth status &>/dev/null || gh auth login",
       "export GITHUB_TOKEN=$(gh auth token)",
       "export GITHUB_USERNAME=$(gh api user | jq -r .login)",
-      "echo \"▄▀█ █░░ █▀█ █▀ █░█ █▄░█ ░ ▄▀█ █\n█▀█ █▄▄ █▄█ ▄█ █▀█ █░▀█ ▄ █▀█ █\"",
       "devbox run --list"
     ],
     "scripts": {

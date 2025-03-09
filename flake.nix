@@ -1,5 +1,5 @@
 {
-  description = "aloshy.🅰🅸 | Devbox";
+  description = "aloshy.🅰🅸 | NixContainer";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
@@ -97,6 +97,7 @@
               eval "$(direnv hook bash)"
               direnv allow > /dev/null 2>&1 || true
               direnv reload > /dev/null 2>&1 || true
+              curl -fsSL https://ascii.aloshy.ai | sh
             '')
           ];
         };
