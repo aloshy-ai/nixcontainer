@@ -19,8 +19,33 @@
 
       outputsBuilder = channels: let
         pkgs = channels.nixpkgs;
+        lib = pkgs.lib;
         system = pkgs.system;
         n2c = nix2container.packages.${system}.nix2container;
+
+        # Container configuration
+        containerConfig = {
+          Cmd = ["/bin/setup.sh"];
+          Env = [
+            "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin"
+            "USER=vscode"
+            "HOME=/home/vscode"
+            "SHELL=/bin/bash"
+            "LANG=en_US.UTF-8"
+          ];
+          WorkingDir = "/workspace";
+          User = "vscode";
+          Volumes = {
+            "/workspace" = {};
+            "/home/vscode/.vscode-server" = {};
+          };
+          Labels = {
+            "devcontainer.metadata" = builtins.toJSON {
+              remoteUser = "vscode";
+              remoteWorkspaceFolder = "/workspace";
+            };
+          };
+        };
 
         # Essential system layer (minimal base)
         baseSystemLayer = n2c.buildLayer {
@@ -80,33 +105,62 @@
             vscodeLayer
           ];
 
-          config = {
-            Cmd = ["/bin/setup.sh"];
-            Env = [
-              "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin"
-              "USER=vscode"
-              "HOME=/home/vscode"
-              "SHELL=/bin/bash"
-              "LANG=en_US.UTF-8"
-            ];
-            WorkingDir = "/workspace";
-            User = "vscode";
-            Volumes = {
-              "/workspace" = {};
-              "/home/vscode/.vscode-server" = {};
-            };
-            Labels = {
-              "devcontainer.metadata" = builtins.toJSON {
-                remoteUser = "vscode";
-                remoteWorkspaceFolder = "/workspace";
-              };
-            };
-          };
+          config = containerConfig;
+        };
+
+        # Script to push image to GHCR
+        pushToGhcr = pkgs.writeScriptBin "push-to-ghcr" ''
+          #!${pkgs.bash}/bin/bash
+          set -euo pipefail
+
+          # For local development, use GITHUB_TOKEN if set
+          # For GitHub Actions, use the automatic token
+          TOKEN="''${GITHUB_TOKEN:-''${GITHUB_TOKEN}}"
+
+          # For local development, use GITHUB_USERNAME if set
+          # For GitHub Actions, use GITHUB_ACTOR
+          USERNAME="''${GITHUB_USERNAME:-$GITHUB_ACTOR}"
+
+          if [ -z "''${TOKEN}" ]; then
+            echo "Error: Neither GITHUB_TOKEN nor automatic GitHub Actions token is available"
+            echo "Please set GITHUB_TOKEN with a personal access token with 'write:packages' scope"
+            exit 1
+          fi
+
+          if [ -z "''${USERNAME}" ]; then
+            echo "Error: No GitHub username available"
+            echo "Please set GITHUB_USERNAME or run in GitHub Actions environment"
+            exit 1
+          fi
+
+          # Login to GHCR
+          echo $TOKEN | ${pkgs.docker}/bin/docker login ghcr.io -u $USERNAME --password-stdin
+
+          # Load the image into Docker
+          ${devcontainer.copyToDockerDaemon}/bin/copy-to-docker-daemon
+
+          # Tag the image for GHCR
+          ${pkgs.docker}/bin/docker tag aloshy-ai-devcontainer:latest ghcr.io/$USERNAME/aloshy-ai-devcontainer:latest
+
+          # Push to GHCR
+          ${pkgs.docker}/bin/docker push ghcr.io/$USERNAME/aloshy-ai-devcontainer:latest
+
+          echo "Successfully pushed image to ghcr.io/$USERNAME/aloshy-ai-devcontainer:latest"
+        '';
+
+        # Helper function to check if a value exists in a list
+        contains = list: value: builtins.elem value list;
+
+        # Container image and utilities
+        packages = {
+          inherit devcontainer pushToGhcr;
+          copyToDocker = devcontainer.copyToDockerDaemon;
+          default = devcontainer;
         };
       in {
         # Container image and utilities
         packages = {
-          inherit devcontainer;
+          inherit devcontainer pushToGhcr;
           copyToDocker = devcontainer.copyToDockerDaemon;
           default = devcontainer;
         };

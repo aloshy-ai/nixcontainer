@@ -1,6 +1,54 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "act@latest": {
+      "last_modified": "2025-02-16T09:28:34Z",
+      "resolved": "github:NixOS/nixpkgs/b1b43d32be000928cc71250ed77f4a0a5f2bc23a#act",
+      "source": "devbox-search",
+      "version": "0.2.74",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/qr4rayifhcjqrga4y5cdz8zxm9r3qjny-act-0.2.74",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/qr4rayifhcjqrga4y5cdz8zxm9r3qjny-act-0.2.74"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xn5byyqpzl8ar9al6d6l7zvs6i35z72m-act-0.2.74",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xn5byyqpzl8ar9al6d6l7zvs6i35z72m-act-0.2.74"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/7mlzpsqzx34v7ymf9nbdpsv8v7kndjcq-act-0.2.74",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/7mlzpsqzx34v7ymf9nbdpsv8v7kndjcq-act-0.2.74"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/x6vas4fnkabdq7767h7n4yvl0s38nx2w-act-0.2.74",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/x6vas4fnkabdq7767h7n4yvl0s38nx2w-act-0.2.74"
+        }
+      }
+    },
     "alejandra@latest": {
       "last_modified": "2025-02-07T11:26:36Z",
       "resolved": "github:NixOS/nixpkgs/d98abf5cf5914e5e4e9d57205e3af55ca90ffc1d#alejandra",
