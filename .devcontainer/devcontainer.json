@@ -1,8 +1,18 @@
 {
   "name": "aloshy.🅰🅸 | NixContainer",
-  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "init": true,
+  "privileged": false,
   "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+  "onCreateCommand": {
+    "nix-setup": "echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf"
+  },
+  "postCreateCommand": {
+    "permissions": "chown -R vscode:vscode /workspace"
+  },
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "customizations": {
     "vscode": {
       "settings": {
