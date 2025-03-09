@@ -7,10 +7,12 @@
   "remoteUser": "vscode",
   "updateRemoteUserUID": true,
   "onCreateCommand": {
-    "nix-setup": "echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf"
+    "nix-setup": "echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf",
+    "git-config": "git config --global core.editor 'code --wait'"
   },
   "postCreateCommand": {
-    "permissions": "chown -R vscode:vscode /workspace"
+    "permissions": "chown -R vscode:vscode /workspace",
+    "home-manager": "nix run home-manager/master -- switch"
   },
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "customizations": {
@@ -21,13 +23,30 @@
         "editor.fontSize": 14,
         "editor.minimap.enabled": false,
         "editor.stickyScroll.enabled": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
         "files.autoSave": "afterDelay",
         "terminal.integrated.fontLigatures.enabled": true,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
         "workbench.colorTheme": "GitHub Dark",
         "workbench.activityBar.location": "default",
         "workbench.activityBar.orientation": "vertical",
         "git.confirmSync": false,
-        "git.autofetch": true
+        "git.autofetch": true,
+        "nix.enableLanguageServer": true,
+        "nix.serverPath": "nil",
+        "nix.serverSettings": {
+          "nil": {
+            "formatting": {
+              "command": ["alejandra"]
+            }
+          }
+        }
       },
       "extensions": [
         "zongou.vs-seti-jetbrainsmononerdfontmono",
@@ -46,7 +65,10 @@
         "github.remotehub",
         "github.copilot",
         "bbenoist.Nix",
-        "mkhl.direnv"
+        "mkhl.direnv",
+        "eamodio.gitlens",
+        "yzhang.markdown-all-in-one",
+        "jnoortheen.nix-ide"
       ]
     }
   },
@@ -54,13 +76,36 @@
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
     "ghcr.io/devcontainers-extra/features/vscode-server:1": {},
     "ghcr.io/devcontainers/features/nix:1": {
-      "extraNixConfig": "experimental-features = nix-command flakes",
+      "extraNixConfig": "experimental-features = nix-command flakes\nsubstituters = https://cache.nixos.org\ntrusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=",
       "packages": "direnv devbox"
-    }
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest",
+      "ppa": false
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers-contrib/features/direnv:1": {}
   },
+  "remoteEnv": {
+    "EDITOR": "code --wait",
+    "VISUAL": "code --wait",
+    "SHELL": "/bin/bash",
+    "LANG": "en_US.UTF-8",
+    "NIX_PATH": "/nix/var/nix/profiles/per-user/vscode/channels"
+  },
+  "mounts": [
+    "source=nix-store,target=/nix/store,type=volume",
+    "source=nix-db,target=/nix/var/nix/db,type=volume",
+    "source=vscode-extensions,target=/home/vscode/.vscode-server/extensions,type=volume"
+  ],
   "runArgs": [
-    "--network=host" // Use host network
+    "--network=host",
+    "--security-opt=seccomp=unconfined"
   ],
   "postStartCommand": "direnv allow > /dev/null 2>&1 || true",
-  "postAttachCommand": "direnv reload > /dev/null 2>&1 || true"
+  "postAttachCommand": {
+    "direnv-reload": "direnv reload > /dev/null 2>&1 || true",
+    "git-setup": "git config --global core.editor 'code --wait'"
+  },
+  "waitFor": "postCreateCommand"
 }

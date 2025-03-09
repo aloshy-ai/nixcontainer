@@ -15,39 +15,39 @@
     ...
   }:
     flake-utils-plus.lib.mkFlake {
-      inherit self;
-      inherit inputs;
+      inherit self inputs;
 
       outputsBuilder = channels: let
         pkgs = channels.nixpkgs;
         system = pkgs.system;
         n2c = nix2container.packages.${system}.nix2container;
 
-        # Base system layer with minimal tools
-        baseLayer = pkgs.buildEnv {
-          name = "base-layer";
-          paths = with pkgs; [
-            coreutils
+        # Essential system layer (minimal base)
+        baseSystemLayer = n2c.buildLayer {
+          deps = with pkgs; [
             bash
+            coreutils
             git
           ];
         };
 
-        # Development tools layer
-        devLayer = pkgs.buildEnv {
-          name = "dev-layer";
-          paths = with pkgs; [
-            nix
-            nixpkgs-fmt
-            docker
+        # VSCode server layer (required for DevContainer)
+        vscodeLayer = n2c.buildLayer {
+          deps = with pkgs; [
+            nodejs # Required for VSCode server
           ];
         };
 
-        # Create vscode user and group
+        # Setup script for minimal environment
         setupScript = pkgs.writeScriptBin "setup.sh" ''
           #!/bin/sh
-          groupadd -g 1000 vscode
-          useradd -u 1000 -g vscode -m -s /bin/bash vscode
+          set -e
+
+          # Create user and group
+          groupadd -g 1000 vscode || echo "Group already exists"
+          useradd -u 1000 -g vscode -m -s /bin/bash vscode || echo "User already exists"
+
+          # Setup workspace and vscode directories
           mkdir -p /workspace && chown vscode:vscode /workspace
           mkdir -p /home/vscode/.vscode-server && chown vscode:vscode /home/vscode/.vscode-server
         '';
@@ -56,66 +56,59 @@
         rootFs = pkgs.buildEnv {
           name = "root";
           paths = [
-            baseLayer
-            devLayer
             setupScript
           ];
+          pathsToLink = ["/bin"];
         };
 
-        # DevContainer image
+        # DevContainer image with minimal configuration
         devcontainer = n2c.buildImage {
           name = "aloshy-ai-devcontainer";
           tag = "latest";
 
           # Layer optimization
           copyToRoot = rootFs;
+          perms = [
+            {
+              path = "${rootFs}/bin/setup.sh";
+              regex = ".*";
+              mode = "0755";
+            }
+          ];
+          layers = [
+            baseSystemLayer
+            vscodeLayer
+          ];
 
           config = {
             Cmd = ["/bin/setup.sh"];
             Env = [
-              "NIX_CONFIG=experimental-features = nix-command flakes"
-              "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin:/nix/var/nix/profiles/per-user/vscode/profile/bin"
+              "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin"
               "USER=vscode"
               "HOME=/home/vscode"
+              "SHELL=/bin/bash"
+              "LANG=en_US.UTF-8"
             ];
             WorkingDir = "/workspace";
             User = "vscode";
             Volumes = {
               "/workspace" = {};
-              "/nix/store" = {};
-              "/nix/var/nix/db" = {};
-              "/nix/var/nix/profiles/per-user/vscode" = {};
               "/home/vscode/.vscode-server" = {};
             };
             Labels = {
               "devcontainer.metadata" = builtins.toJSON {
                 remoteUser = "vscode";
                 remoteWorkspaceFolder = "/workspace";
-                customizations = {
-                  vscode = {
-                    extensions = [
-                      "bbenoist.Nix"
-                      "mkhl.direnv"
-                      "ms-vscode-remote.remote-containers"
-                    ];
-                  };
-                };
               };
             };
           };
         };
       in {
-        # Development shell for local development
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            docker
-          ];
-        };
-
         # Container image and utilities
         packages = {
           inherit devcontainer;
           copyToDocker = devcontainer.copyToDockerDaemon;
+          default = devcontainer;
         };
       };
     };
