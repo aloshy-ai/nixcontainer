@@ -1,4 +1,56 @@
 {
   "lockfile_version": "1",
-  "packages": {}
+  "packages": {
+    "alejandra@latest": {
+      "last_modified": "2025-02-07T11:26:36Z",
+      "resolved": "github:NixOS/nixpkgs/d98abf5cf5914e5e4e9d57205e3af55ca90ffc1d#alejandra",
+      "source": "devbox-search",
+      "version": "3.1.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/whmr30aqa0rb0v0imycrfqndncv2fsq0-alejandra-3.1.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/whmr30aqa0rb0v0imycrfqndncv2fsq0-alejandra-3.1.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bl0x27bjqzgrdzzj7g7dmyjqj7gn0ska-alejandra-3.1.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/bl0x27bjqzgrdzzj7g7dmyjqj7gn0ska-alejandra-3.1.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xpbs942rcfph0y95jsc7jpwcn2zsvval-alejandra-3.1.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xpbs942rcfph0y95jsc7jpwcn2zsvval-alejandra-3.1.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/2qk5wf331s0fjs43nfnrd3ga50m8217c-alejandra-3.1.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/2qk5wf331s0fjs43nfnrd3ga50m8217c-alejandra-3.1.0"
+        }
+      }
+    },
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "resolved": "github:NixOS/nixpkgs/de0fe301211c267807afd11b12613f5511ff7433?lastModified=1741310760&narHash=sha256-aizILFrPgq%2FW53Jw8i0a1h1GZAAKtlYOrG%2FA5r46gVM%3D"
+    }
+  }
 }
