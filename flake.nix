@@ -26,7 +26,7 @@
         targetSystem =
           if system == "aarch64-darwin"
           then "aarch64-linux"
-          else "x86_64-linux";
+          else "aarch64-linux"; # Change this from x86_64-linux
 
         pkgsLinux = import nixpkgs {
           system = targetSystem;
