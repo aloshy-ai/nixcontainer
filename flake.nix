@@ -21,6 +21,16 @@
 
       outputsBuilder = channels: let
         system = channels.nixpkgs.system;
+
+        # Use Linux packages for container contents
+        pkgsLinux = import nixpkgs {
+          system = "aarch64-linux";
+          config = {
+            allowUnfree = true;
+          };
+        };
+
+        # Use native packages for build tools
         pkgs = import nixpkgs {
           inherit system;
           config = {
@@ -30,6 +40,7 @@
             nix-vscode-extensions.overlays.default
           ];
         };
+
         lib = pkgs.lib;
         n2c = nix2container.packages.${system}.nix2container;
         vscode-exts = nix-vscode-extensions.packages.${system};
@@ -41,8 +52,8 @@
             "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin"
             "USER=vscode"
             "HOME=/home/vscode"
-            "SHELL=/bin/zsh"
-            "LANG=C.UTF-8" # Simpler locale setting
+            "SHELL=/bin/bash"
+            "LANG=C.UTF-8"
             "ZDOTDIR=/home/vscode"
           ];
           WorkingDir = "/workspace";
@@ -57,23 +68,30 @@
               remoteWorkspaceFolder = "/workspace";
             };
           };
+          Architecture = "arm64";
+          OS = "linux";
         };
 
         # Essential system layer (minimal base)
         baseSystemLayer = n2c.buildLayer {
-          deps = with pkgs; [
-            (hiPrio zsh) # Default shell (high priority to ensure it's preferred)
-            bash # Provides /bin/sh and /bin/bash
-            coreutils # Essential tools
-            git # Version control
-            direnv # Environment management
-            devbox # Development environments
+          deps = with pkgsLinux; [
+            bashInteractive
+            coreutils
+            which
+            (hiPrio zsh)
+            git
+            direnv
+            devbox
           ];
         };
 
-        # System files layer with pre-created users
+        # System files layer with pre-created users and proper filesystem structure
         systemFilesLayer = n2c.buildLayer {
-          deps = [];
+          deps = with pkgsLinux; [
+            bashInteractive
+            coreutils
+            which
+          ];
           contents = [
             (pkgs.writeTextDir "etc/passwd" ''
               root:x:0:0:System administrator:/root:/bin/bash
@@ -92,8 +110,36 @@
               nobody:!:1::::::
               vscode:!:1::::::
             '')
+            # Create essential directories
+            (pkgs.runCommand "essential-dirs" {} ''
+              mkdir -p $out/{bin,usr/bin,etc,home/vscode}
+
+              # Copy bash and create sh symlink
+              cp ${pkgsLinux.bashInteractive}/bin/bash $out/bin/
+              cd $out/bin
+              ln -s bash sh
+
+              # Copy essential coreutils
+              for util in ${pkgsLinux.coreutils}/bin/*; do
+                if [ -f "$util" ] && [ -x "$util" ]; then
+                  cp "$util" $out/bin/
+                fi
+              done
+
+              # Copy which
+              cp ${pkgsLinux.which}/bin/which $out/bin/
+
+              # Link all required tools
+              ln -s ${pkgsLinux.git}/bin/git $out/bin/
+              ln -s ${pkgsLinux.direnv}/bin/direnv $out/bin/
+              ln -s ${pkgsLinux.devbox}/bin/devbox $out/bin/
+              ln -s ${pkgsLinux.zsh}/bin/zsh $out/bin/
+            '')
             # Basic profile with direnv hook and auto-allow/reload
             (pkgs.writeTextDir "home/vscode/.profile" ''
+              # Ensure all tools are in PATH
+              export PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin:$PATH
+
               eval "$(direnv hook bash)"
               direnv allow > /dev/null 2>&1 || true
               direnv reload > /dev/null 2>&1 || true
@@ -104,8 +150,8 @@
 
         # VSCode server layer (required for DevContainer)
         vscodeLayer = n2c.buildLayer {
-          deps = with pkgs; [
-            nodejs-slim # Minimal Node.js for VS Code server
+          deps = with pkgsLinux; [
+            nodejs-slim
           ];
         };
 
@@ -116,7 +162,7 @@
 
           # Setup workspace and vscode directories with proper permissions
           mkdir -p /workspace /home/vscode/.vscode-server
-          chown -R 1000:1000 /workspace /home/vscode
+          chown -R vscode:vscode /workspace /home/vscode
 
           # Keep container running
           exec sleep infinity
@@ -205,19 +251,51 @@
           echo "Successfully loaded image as nixcontainer:latest"
         '';
 
+        # Script to test container functionality
+        testContainer = pkgs.writeScriptBin "test-container" ''
+          #!${pkgs.bash}/bin/bash
+          set -euo pipefail
+
+          echo "Testing container functionality..."
+
+          # Test basic container operation
+          ${pkgs.docker}/bin/docker run --rm nixcontainer:latest echo "Basic container test: OK"
+
+          # Test user setup and essential tools
+          ${pkgs.docker}/bin/docker run --rm nixcontainer:latest /bin/bash -c '
+            echo -n "User check: "
+            whoami
+
+            echo -n "Home directory: "
+            echo $HOME
+
+            echo "Checking essential tools..."
+            for tool in direnv git devbox zsh which; do
+              if command -v $tool >/dev/null 2>&1; then
+                echo "✓ $tool: $(which $tool)"
+              else
+                echo "✗ $tool: not found"
+                exit 1
+              fi
+            done
+          '
+
+          echo "All tests passed successfully!"
+        '';
+
         # Helper function to check if a value exists in a list
         contains = list: value: builtins.elem value list;
 
         # Container image and utilities
         packages = {
-          inherit devcontainer pushToGhcr loadImage;
+          inherit devcontainer pushToGhcr loadImage testContainer;
           copyToDocker = devcontainer.copyToDockerDaemon;
           default = devcontainer;
         };
       in {
         # Container image and utilities
         packages = {
-          inherit devcontainer pushToGhcr loadImage;
+          inherit devcontainer pushToGhcr loadImage testContainer;
           copyToDocker = devcontainer.copyToDockerDaemon;
           default = devcontainer;
         };
