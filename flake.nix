@@ -5,10 +5,6 @@
     nixpkgs.url = "github:nixos/nixpkgs";
     flake-utils-plus.url = "github:gytis-ivaskevicius/flake-utils-plus";
     nix2container.url = "github:nlewo/nix2container";
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
@@ -17,7 +13,6 @@
     nixpkgs,
     flake-utils-plus,
     nix2container,
-    home-manager,
     nix-vscode-extensions,
     ...
   }:
@@ -43,12 +38,12 @@
         containerConfig = {
           Cmd = ["/bin/setup.sh"];
           Env = [
-            "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin:/home/vscode/.nix-profile/bin"
+            "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin"
             "USER=vscode"
             "HOME=/home/vscode"
-            "SHELL=/bin/bash"
-            "LANG=en_US.UTF-8"
-            "NIX_PATH=/nix/var/nix/profiles/per-user/vscode/channels"
+            "SHELL=/bin/zsh"
+            "LANG=C.UTF-8" # Simpler locale setting
+            "ZDOTDIR=/home/vscode"
           ];
           WorkingDir = "/workspace";
           User = "vscode";
@@ -67,10 +62,11 @@
         # Essential system layer (minimal base)
         baseSystemLayer = n2c.buildLayer {
           deps = with pkgs; [
-            bash
-            coreutils
-            git
-            iana-etc
+            (hiPrio zsh) # Default shell (high priority to ensure it's preferred)
+            coreutils # Essential tools
+            git # Version control
+            direnv # Environment management
+            devbox # Development environments
           ];
         };
 
@@ -81,88 +77,47 @@
             (pkgs.writeTextDir "etc/passwd" ''
               root:x:0:0:System administrator:/root:/bin/bash
               nobody:x:65534:65534:Nobody:/:/bin/false
-              vscode:x:1000:1000:VSCode User:/home/vscode:/bin/bash
+              vscode:x:1000:1000:VSCode User:/home/vscode:/bin/zsh
             '')
             (pkgs.writeTextDir "etc/group" ''
               root:x:0:
               nobody:x:65534:
               vscode:x:1000:
+              docker:x:999:vscode
+              wheel:x:998:vscode
             '')
             (pkgs.writeTextDir "etc/shadow" ''
               root:!:1::::::
               nobody:!:1::::::
               vscode:!:1::::::
             '')
-            (pkgs.writeTextDir "home/vscode/.bashrc" '''')
+            # Basic profile with direnv hook and auto-allow/reload
+            (pkgs.writeTextDir "home/vscode/.profile" ''
+              eval "$(direnv hook bash)"
+              direnv allow > /dev/null 2>&1 || true
+              direnv reload > /dev/null 2>&1 || true
+            '')
           ];
         };
 
         # VSCode server layer (required for DevContainer)
         vscodeLayer = n2c.buildLayer {
           deps = with pkgs; [
-            nodejs # Required for VSCode server
-            home-manager
+            nodejs-slim # Minimal Node.js for VS Code server
           ];
-        };
-
-        # Home manager configuration
-        homeConfig = {
-          home.stateVersion = "23.11";
-          programs.vscode = {
-            enable = true;
-            mutableExtensionsDir = true;
-            profiles.default.userSettings = {
-              "editor.fontFamily" = "'JetBrainsMono Nerd Font Mono', 'Droid Sans Mono', 'monospace', monospace";
-              "editor.fontLigatures" = true;
-              "editor.fontSize" = 14;
-              "editor.minimap.enabled" = false;
-              "editor.stickyScroll.enabled" = false;
-              "files.autoSave" = "afterDelay";
-              "terminal.integrated.fontLigatures.enabled" = true;
-              "workbench.colorTheme" = "GitHub Dark";
-              "workbench.activityBar.orientation" = "vertical";
-              "git.confirmSync" = false;
-              "git.autofetch" = true;
-            };
-            profiles.default.extensions = with pkgs.vscode-marketplace; [
-              zongou.vs-seti-jetbrainsmononerdfontmono
-              ms-vscode-remote.remote-containers
-              github.vscode-pull-request-github
-              github.vscode-github-actions
-              fuadpashayev.bottom-terminal
-              ms-azuretools.vscode-docker
-              github.github-vscode-theme
-              esbenp.prettier-vscode
-              kamadorueda.alejandra
-              fsevenm.run-it-on
-              jetpack-io.devbox
-              github.codespaces
-              github.remotehub
-              github.copilot
-              bbenoist.nix
-              mkhl.direnv
-            ];
-          };
         };
 
         # Setup script for minimal environment
         setupScript = pkgs.writeScriptBin "setup.sh" ''
-                    #!/bin/sh
-                    set -e
+          #!/bin/sh
+          set -e
 
-                    # Setup workspace and vscode directories
-                    mkdir -p /workspace && chown 1000:1000 /workspace
-                    mkdir -p /home/vscode/.vscode-server && chown 1000:1000 /home/vscode/.vscode-server
+          # Setup workspace and vscode directories with proper permissions
+          mkdir -p /workspace /home/vscode/.vscode-server
+          chown -R 1000:1000 /workspace /home/vscode
 
-                    # Setup home-manager for vscode user
-                    if [ ! -d "/home/vscode/.config/home-manager" ]; then
-                      mkdir -p /home/vscode/.config/home-manager
-                      cat > /home/vscode/.config/home-manager/home.nix <<EOF
-                      ${builtins.toJSON homeConfig}
-          EOF
-                      chown -R 1000:1000 /home/vscode/.config
-                      su vscode -c "home-manager switch"
-                    fi
+          # Keep container running
+          exec sleep infinity
         '';
 
         # Root filesystem setup
