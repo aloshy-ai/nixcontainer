@@ -5,6 +5,11 @@
     nixpkgs.url = "github:nixos/nixpkgs";
     flake-utils-plus.url = "github:gytis-ivaskevicius/flake-utils-plus";
     nix2container.url = "github:nlewo/nix2container";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
   outputs = inputs @ {
@@ -12,26 +17,38 @@
     nixpkgs,
     flake-utils-plus,
     nix2container,
+    home-manager,
+    nix-vscode-extensions,
     ...
   }:
     flake-utils-plus.lib.mkFlake {
       inherit self inputs;
 
       outputsBuilder = channels: let
-        pkgs = channels.nixpkgs;
+        system = channels.nixpkgs.system;
+        pkgs = import nixpkgs {
+          inherit system;
+          config = {
+            allowUnfree = true;
+          };
+          overlays = [
+            nix-vscode-extensions.overlays.default
+          ];
+        };
         lib = pkgs.lib;
-        system = pkgs.system;
         n2c = nix2container.packages.${system}.nix2container;
+        vscode-exts = nix-vscode-extensions.packages.${system};
 
         # Container configuration
         containerConfig = {
           Cmd = ["/bin/setup.sh"];
           Env = [
-            "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin"
+            "PATH=/bin:/usr/bin:/nix/var/nix/profiles/default/bin:/home/vscode/.nix-profile/bin"
             "USER=vscode"
             "HOME=/home/vscode"
             "SHELL=/bin/bash"
             "LANG=en_US.UTF-8"
+            "NIX_PATH=/nix/var/nix/profiles/per-user/vscode/channels"
           ];
           WorkingDir = "/workspace";
           User = "vscode";
@@ -84,17 +101,68 @@
         vscodeLayer = n2c.buildLayer {
           deps = with pkgs; [
             nodejs # Required for VSCode server
+            home-manager
           ];
+        };
+
+        # Home manager configuration
+        homeConfig = {
+          home.stateVersion = "23.11";
+          programs.vscode = {
+            enable = true;
+            mutableExtensionsDir = true;
+            profiles.default.userSettings = {
+              "editor.fontFamily" = "'JetBrainsMono Nerd Font Mono', 'Droid Sans Mono', 'monospace', monospace";
+              "editor.fontLigatures" = true;
+              "editor.fontSize" = 14;
+              "editor.minimap.enabled" = false;
+              "editor.stickyScroll.enabled" = false;
+              "files.autoSave" = "afterDelay";
+              "terminal.integrated.fontLigatures.enabled" = true;
+              "workbench.colorTheme" = "GitHub Dark";
+              "workbench.activityBar.orientation" = "vertical";
+              "git.confirmSync" = false;
+              "git.autofetch" = true;
+            };
+            profiles.default.extensions = with pkgs.vscode-marketplace; [
+              zongou.vs-seti-jetbrainsmononerdfontmono
+              ms-vscode-remote.remote-containers
+              github.vscode-pull-request-github
+              github.vscode-github-actions
+              fuadpashayev.bottom-terminal
+              ms-azuretools.vscode-docker
+              github.github-vscode-theme
+              esbenp.prettier-vscode
+              kamadorueda.alejandra
+              fsevenm.run-it-on
+              jetpack-io.devbox
+              github.codespaces
+              github.remotehub
+              github.copilot
+              bbenoist.nix
+              mkhl.direnv
+            ];
+          };
         };
 
         # Setup script for minimal environment
         setupScript = pkgs.writeScriptBin "setup.sh" ''
-          #!/bin/sh
-          set -e
+                    #!/bin/sh
+                    set -e
 
-          # Setup workspace and vscode directories
-          mkdir -p /workspace && chown 1000:1000 /workspace
-          mkdir -p /home/vscode/.vscode-server && chown 1000:1000 /home/vscode/.vscode-server
+                    # Setup workspace and vscode directories
+                    mkdir -p /workspace && chown 1000:1000 /workspace
+                    mkdir -p /home/vscode/.vscode-server && chown 1000:1000 /home/vscode/.vscode-server
+
+                    # Setup home-manager for vscode user
+                    if [ ! -d "/home/vscode/.config/home-manager" ]; then
+                      mkdir -p /home/vscode/.config/home-manager
+                      cat > /home/vscode/.config/home-manager/home.nix <<EOF
+                      ${builtins.toJSON homeConfig}
+          EOF
+                      chown -R 1000:1000 /home/vscode/.config
+                      su vscode -c "home-manager switch"
+                    fi
         '';
 
         # Root filesystem setup
