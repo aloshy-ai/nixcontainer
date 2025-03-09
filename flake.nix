@@ -23,11 +23,13 @@
         system = channels.nixpkgs.system;
 
         # Use Linux packages for container contents
+        targetSystem =
+          if system == "aarch64-darwin"
+          then "aarch64-linux"
+          else "x86_64-linux";
+
         pkgsLinux = import nixpkgs {
-          system =
-            if system == "aarch64-darwin"
-            then "aarch64-linux"
-            else "x86_64-linux";
+          system = targetSystem;
           config = {
             allowUnfree = true;
           };
@@ -71,7 +73,10 @@
               remoteWorkspaceFolder = "/workspace";
             };
           };
-          Architecture = "arm64";
+          Architecture =
+            if targetSystem == "aarch64-linux"
+            then "arm64"
+            else "amd64";
           OS = "linux";
         };
 
