@@ -1,7 +1,0 @@
-origin: aloshy-ai/nixcontainer
-
-statements:
-  - subjects:
-      - repo:${origin}:**
-    permissions:
-      contents: write
