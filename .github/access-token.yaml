@@ -2,7 +2,6 @@ origin: aloshy-ai/nixcontainer
 
 statements:
   - subjects:
-      - repo:${origin}:ref:refs/heads/main
-      - repo:${origin}:workflow_ref:${origin}/.github/workflows/ci.yml@refs/heads/main
+      - repo:${origin}:**
     permissions:
       contents: write
